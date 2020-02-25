@@ -1,0 +1,41 @@
+			   READLINE PATCH REPORT
+			   =====================
+
+Readline-Release: 8.0
+Patch-ID: readline80-004
+
+Bug-Reported-by:	auroralanes@protonmail.ch
+Bug-Reference-ID:	<WikEDKluAyoha9IDLp83rbN7_Uinr2rrpvSV_z4wmt9qur9piN-FNOn17P0cAizEVah1Fvc9d641vIIWX_7SC6EUTz0CatnOH-C-UK3rPYc=@protonmail.ch>
+Bug-Reference-URL:	https://lists.gnu.org/archive/html/bug-readline/2020-01/msg00008.html
+
+Bug-Description:
+
+If writing the history file fails, and renaming the backup history file fails,
+it's possible for readline's history code to return the wrong error to its
+caller.
+
+--- a/histfile.c
++++ b/histfile.c
+@@ -620,6 +620,7 @@ history_truncate_file (const char *fname
+ 
+   if (rv != 0)
+     {
++      rv = errno;
+       if (tempname)
+ 	unlink (tempname);
+       history_lines_written_to_file = 0;
+@@ -767,6 +768,7 @@ mmap_error:
+ 
+   if (rv != 0)
+     {
++      rv = errno;
+       if (tempname)
+ 	unlink (tempname);
+       history_lines_written_to_file = 0;
+--- a/patchlevel
++++ b/patchlevel
+@@ -1,3 +1,3 @@
+ # Do not edit -- exists only for use by patch
+ 
+-3
++4
